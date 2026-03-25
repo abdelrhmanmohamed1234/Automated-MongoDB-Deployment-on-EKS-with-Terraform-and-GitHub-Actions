@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mongo-ingress
+  namespace: default
+  annotations:
+    # Essential: Tells the controller to create a public-facing ALB
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    
+    # Essential: Targets the pods directly using their IP addresses (better performance)
+    alb.ingress.kubernetes.io/target-type: ip
+    
+    # Optional: Groups multiple ingresses under one ALB to save on AWS costs
+    alb.ingress.kubernetes.io/group.name: my-app-group
+    
+    # Optional: Health check path for Mongo Express
+    alb.ingress.kubernetes.io/healthcheck-path: /
+spec:
+  ingressClassName: alb # This links to the AWS Load Balancer Controller
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mongo-express-service # Must match your Service name
+                port:
+                  number: 80 # Must match the port in your Service file

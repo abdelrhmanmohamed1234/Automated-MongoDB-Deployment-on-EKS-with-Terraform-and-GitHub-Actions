@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-express-service
+spec:
+  # NodePort is the standard for Ingress to route traffic
+  type: NodePort 
+  selector:
+    app: mongo-express
+  ports:
+    - protocol: TCP
+      port: 80         # The port the Ingress will call
+      targetPort: 8081 # The port Mongo Express is listening on

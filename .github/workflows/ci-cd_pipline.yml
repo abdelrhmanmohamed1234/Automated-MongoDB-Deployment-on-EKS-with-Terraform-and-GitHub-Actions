@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  infrastructure-and-deploy-using-(Terraform and K8s):
+  infrastructure-and-deploy-using-Terraform- and-K8s:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code

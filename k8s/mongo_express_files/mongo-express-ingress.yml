@@ -4,6 +4,7 @@ metadata:
   name: mongo-ingress
   namespace: default
   annotations:
+    kubernetes.io/ingress.class: alb
     # Essential: Tells the controller to create a public-facing ALB
     alb.ingress.kubernetes.io/scheme: internet-facing
     

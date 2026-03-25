@@ -5,7 +5,8 @@ resource "aws_eks_cluster" "main" {
   role_arn = aws_iam_role.eks_cluster.arn
 
   vpc_config {
-    subnet_ids = aws_subnet.public[*].id
+    subnet_ids = aws_subnet.public[*].idi
+    security_group_ids = [aws_security_group.node_sg.id]
   }
 
   depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]

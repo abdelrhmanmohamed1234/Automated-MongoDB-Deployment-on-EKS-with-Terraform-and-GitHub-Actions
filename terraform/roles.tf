@@ -108,7 +108,7 @@ resource "aws_iam_role" "aws_lbc_role" {
 # Attach the official AWS Policy for Load Balancers
 resource "aws_iam_role_policy_attachment" "aws_lbc_attach" {
   role       = aws_iam_role.aws_lbc_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSLoadBalancerControllerPolicy"
+  policy_arn = aws_iam_policy.lbc_policy.arn
 }
 
 # 1. Download the official AWS Policy for the LB Controller

@@ -1,0 +1,65 @@
+name: " CI/CD PIPLINE FOR PROJECT "
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  infrastructure-and-deploy-using-(Terraform and K8s):
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # --- STAGE 1: TERRAFORM ---
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./terraform
+
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./terraform
+
+      # --- STAGE 2: KUBERNETES DEPLOYMENT ---
+      - name: Update Kubeconfig
+        run: |
+          aws eks update-kubeconfig --region us-east-1 --name my-eks-cluster
+
+      - name: Deploy MongoDB Stack
+        run: |
+          # Deploy MongoDB first (Storage -> Secrets -> App)
+          kubectl apply -f k8s/mongodb_files/mongodb-sc.yml
+          kubectl apply -f k8s/mongodb_files/mongodb-secrets.yml
+          kubectl apply -f k8s/mongodb_files/mongodb-pvc.yml
+          kubectl apply -f k8s/mongodb_files/mongodb-deployment.yml
+          kubectl apply -f k8s/mongodb_files/mongodb-service.yml
+
+      - name: Deploy Mongo Express
+        run: |
+          # Deploy UI second
+          kubectl apply -f k8s/mongo_express_files/mongo-express-configmap.yml
+          kubectl apply -f k8s/mongo_express_files/mongo-express-deployment.yml
+          kubectl apply -f k8s/mongo_express_files/mongo-express-service.yml
+          kubectl apply -f k8s/mongo_express_files/mongo-express-ingress.yml
+
+      - name: Verify Deployment
+        run: |
+          kubectl get pods -A
+          kubectl get ingress
+

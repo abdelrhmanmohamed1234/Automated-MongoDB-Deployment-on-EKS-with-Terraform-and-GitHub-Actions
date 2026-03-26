@@ -27,4 +27,4 @@ spec:
               service:
                 name: mongo-express-service # Must match your Service name
                 port:
-                  number: 8081 # Must match the port in your Service file
+                  number: 80 # Must match the port in your Service file

@@ -4,7 +4,7 @@ metadata:
   name: mongo-express-service
 spec:
   # NodePort is the standard for Ingress to route traffic
-  type: NodePort 
+  type: ClusterIP
   selector:
     app: mongo-express
   ports:
